@@ -1,18 +1,18 @@
-{ config, pkgs, home-manager, ... }:
+{ config, pkgs, ... }:
 
 {
   imports =
     [ 
       ./hardware-configuration.nix
-      home-manager.nixosModule
+      #home-manager.nixosModule
     ];
 
-  # nix = {
-  #   package = pkgs.unstable;
-  #   extraOptions = ''
-  #     experimental-features = nix-command flakes
-  #   '';
-  # };
+  nix = {
+    package = pkgs.nixUnstable;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+  };
 
   boot.loader = {
     grub = {

@@ -17,21 +17,8 @@
     nixosConfigurations.adam = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = attrs;
-      #overlays = {
-      #  pkg-sets = (
-      #    final: prev: {
-      #      unstable = import inputs.unstable { system = final.system; };
-      #      trunk = import inputs.trunk { system = final.system; };
-      #    }
-      #  );
-
-      modules = [
-        ./configuration.nix 
-      ];
-
-
-
-
+      modules = [ ./configuration.nix ];
     };
+
   };
 }
