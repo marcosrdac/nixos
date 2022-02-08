@@ -27,6 +27,20 @@
   networking.hostName = "adam";
   time.timeZone = "Brazil/East";
 
+  users.users.marcosrdac = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ];
+  };
+
+  environment.systemPackages = with pkgs; [
+    vim
+    firefox qutebrowser
+    lf
+    wget
+    git
+    pavucontrol
+  ];
+
   environment.variables = {
     EDITOR = "vim";
   };
@@ -42,41 +56,19 @@
     keyMap = "us";
   };
 
-  # Enable the X11 windowing system.
   services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
-  # Configure keymap in X11
+  services.xserver.libinput.enable = true;
+
   services.xserver.layout = "us";
   services.xserver.xkbVariant = "intl";
   services.xserver.xkbOptions = "caps:swapescape";
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  services.xserver.libinput.enable = true;
-
-  users.users.marcosrdac = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-  };
-
-  environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    firefox qutebrowser
-    lf
-    wget
-    git
-    pavucontrol
-  ];
+  services.printing.enable = true;
 
   programs.gnupg.agent = {
     enable = true;
@@ -84,11 +76,7 @@
   };
 
   networking.firewall.enable = false;
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
 
   system.stateVersion = "21.05";
 }
