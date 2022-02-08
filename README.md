@@ -7,6 +7,7 @@
 I am not really confident of my first steps, but I know that, as far as NixOS 21.05, I had to install the unstable version of Nix to have access to `flakes` via:
 
 ```sh
+nix-channel --update
 nix-env -f '<nixpkgs>' -iA nixUnstable
 ```
 
