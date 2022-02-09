@@ -16,6 +16,12 @@
 
   outputs = { self, nixpkgs, ... }@attrs: {
 
+    nixosModules = {
+      configHost = {
+        configHost = import ./lib/modules/configHost ;
+      };
+    };
+
     nixosConfigurations."adam" = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = attrs;
@@ -26,3 +32,20 @@
 
   };
 }
+
+# TIP on reading multiple files
+#nixosModules = builtins.listToAttrs (
+#map
+#  (x: { name = x; value = import (./modules + "/${x}"); })
+#  (builtins.attrNames (builtins.readDir ./modules)));
+#
+#nixosConfigurations = 
+#builtins.listToAttrs (map (x:
+#  {
+#    name = x;
+#    value = defineFlakeSystem {
+#      imports = [
+#	(import (./hosts + "/${x}/configuration.nix") { inherit self; })
+#      ];
+#    };
+#  }) (builtins.attrNames (builtins.readDir ./hosts)));
