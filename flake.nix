@@ -15,24 +15,25 @@
 
 
   outputs = { self, nixpkgs, nixpkgs-unstable, ... }@attrs: 
+
     let 
       overlay-unstable = final: prev: {
         unstable = import nixpkgs-unstable {
           system = prev.system;
           config.allowUnfree = true;
         };
-      # another overlay-stable would also make sense think about it
+      # another overlay-stable would also make sense, think about it ;)
       };
     in {
 
-      # nixosModules = {
-      #   #configHost = {
-      #   #  #configHost = import ./lib/modules/configHost ;
-      #   #};
-      #   #test = {
-      #   #  test = import ./lib/modules/test ;
-      #   #};
-      # };
+      nixosModules = {
+        #configHost = {
+        #  #configHost = import ./lib/modules/configHost ;
+        #};
+        test = {
+          test = import ./lib/modules/test ;
+        };
+      };
   
       nixosConfigurations = {
 
