@@ -6,7 +6,7 @@ in {
   # imports = [ ../../users/regular.nix ];
 
   options.default.desktop = {
-    enable = mkEnableOption "Enable the default desktop configuration";
+    enable = mkEnableOption "Enable default desktop configuration";
   };
 
   config = mkIf cfg.enable {

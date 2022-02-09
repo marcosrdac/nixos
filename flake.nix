@@ -4,7 +4,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
-    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
 
     home-manager = {
@@ -14,23 +14,40 @@
   };
 
 
-  outputs = { self, nixpkgs, ... }@attrs: {
+  outputs = { self, nixpkgs, nixpkgs-unstable, ... }@attrs: 
+    let 
+      overlay-unstable = final: prev: {
+        unstable = import nixpkgs-unstable {
+          system = prev.system;
+          config.allowUnfree = true;
+        };
+      # another overlay-stable would also make sense think about it
+      };
+    in {
 
-    nixosModules = {
-      configHost = {
-        configHost = import ./lib/modules/configHost ;
+      # nixosModules = {
+      #   #configHost = {
+      #   #  #configHost = import ./lib/modules/configHost ;
+      #   #};
+      #   #test = {
+      #   #  test = import ./lib/modules/test ;
+      #   #};
+      # };
+  
+      nixosConfigurations = {
+
+        adam = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = attrs;
+          modules = [ 
+            #({ config, pkgs, ... }: { nixpkgs.overlays = [ overlay-unstable ]; })
+            ({ ... }: { nixpkgs.overlays = [ overlay-unstable ]; })
+            ./configuration.nix
+          ];
+        };
+
       };
     };
-
-    nixosConfigurations."adam" = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = attrs;
-      modules = [ ./configuration.nix ];
-      # it could be ./adam_configuration.nix
-      # in fact, I will code a way to reuse configurations between dektops easily
-    };
-
-  };
 }
 
 # TIP on reading multiple files
