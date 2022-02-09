@@ -26,14 +26,7 @@
       };
     in {
 
-      nixosModules = {
-        #configHost = {
-        #  #configHost = import ./lib/modules/configHost ;
-        #};
-        test = {
-          test = import ./lib/modules/test ;
-        };
-      };
+      nixosModules = { };
   
       nixosConfigurations = {
 
@@ -41,8 +34,8 @@
           system = "x86_64-linux";
           specialArgs = attrs;
           modules = [ 
-            #({ config, pkgs, ... }: { nixpkgs.overlays = [ overlay-unstable ]; })
-            ({ ... }: { nixpkgs.overlays = [ overlay-unstable ]; })
+            # ({ config, pkgs, ... }: { configuration-attr-set } )
+            ( { ... }: { nixpkgs.overlays = [ overlay-unstable ]; } )
             ./configuration.nix
           ];
         };

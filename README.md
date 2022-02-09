@@ -48,6 +48,7 @@ nixos-rebuild switch
 
 ## TODO
 
+- [X] Overlay for unfree software
 - [ ] Make system configuration default as a module
 - [ ] Create users on flake.nix without home-manager
 - [ ] Create users on flake.nix with home-manager (if advantages are seen)

@@ -4,14 +4,9 @@
   imports = [ 
     ./hardware-configuration.nix
     home-manager.nixosModule
-    #./test
   ];
 
   # TODO: NETWORKMANAGER
-
-  #test = {
-  #  enable = true;
-  #};
 
   boot.loader = {
     grub = {
@@ -78,7 +73,7 @@
   services.xserver.xkbVariant = "intl";
   services.xserver.xkbOptions = "caps:swapescape";
 
-  #sound.enable = false;
+  sound.enable = true;
   hardware.pulseaudio.enable = true;
   nixpkgs.config.pulseaudio = true;
   services.printing.enable = true;
