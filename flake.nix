@@ -3,8 +3,9 @@
 
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:NixOS/nixpkgs/";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
 
     home-manager = {
@@ -14,30 +15,33 @@
   };
 
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, ... }@attrs: 
+  outputs = { self, nixpkgs, nixpkgs-unstable, ... }@inputs: 
 
     let 
-      overlay-unstable = final: prev: {
-        unstable = import nixpkgs-unstable {
-          system = prev.system;
-          config.allowUnfree = true;
+      readModules = d: map (x: d + "/${x}") (
+        builtins.attrNames (builtins.readDir d)
+      );
+
+      overlays = {
+        unstable = final: prev: {
+          unstable = import nixpkgs-unstable {
+            system = prev.system;
+            config.allowUnfree = true;
+          };
         };
-      # another overlay-stable would also make sense, think about it ;)
       };
     in {
 
-      nixosModules = { };
-  
       nixosConfigurations = {
 
         adam = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = attrs;
-          modules = [ 
-            # ({ config, pkgs, ... }: { configuration-attr-set } )
-            ( { ... }: { nixpkgs.overlays = [ overlay-unstable ]; } )
-            ./configuration.nix
-          ];
+          specialArgs = inputs;
+          modules = [
+	      ( { ... }: { nixpkgs.overlays = [ overlays.unstable ]; } )
+	    ]
+            ++ (readModules ./lib/modules)
+            ++ [ ./configuration.nix ];
         };
 
       };

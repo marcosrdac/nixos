@@ -4,9 +4,15 @@
   imports = [ 
     ./hardware-configuration.nix
     home-manager.nixosModule
+    #./lib/modules/hello
   ];
 
   # TODO: NETWORKMANAGER
+
+  services.hello = {
+    enable = true;
+    greeter = "Marcos";
+  };
 
   boot.loader = {
     grub = {
@@ -42,7 +48,6 @@
     wget
     git
     pavucontrol
-
 
     keepassx2
     unstable.spotify
