@@ -8,5 +8,4 @@
   hostConfig = {
     enable = true;
   };
-
 }

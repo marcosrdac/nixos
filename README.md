@@ -54,7 +54,7 @@ nixos-rebuild switch
 
 - [Pinpox's configurations](https://github.com/pinpox/nixos)
 - [Jordan Isaacs' configurations](https://github.com/jordanisaacs/dotfiles)
-- [Krutonium's configurations](https://github.com/jordanisaacs/dotfiles)
+- [Krutonium's configurations](https://github.com/Krutonium/My_Unified_NixOS_Config)
 
 ## TODO
 
