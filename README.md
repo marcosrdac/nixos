@@ -1,5 +1,9 @@
 # NixOS Flake setup
 
+## WARNING
+
+*This is not usable for other computers until I am able to isolate the configHost module from my adam desktop specific configurations.*
+
 ## First instalation
 
 ### Acquire flakes
