@@ -46,6 +46,12 @@ nixos-rebuild switch
 - Users are to be able to use xinit from DM (if a DM is really wanted)
 - Consider creating nix file for overlays (maybe a module?)
 
+## Similar projects
+
+- [Pinpox's configurations](https://github.com/pinpox/nixos)
+- [Jordan Isaacs' configurations](https://github.com/jordanisaacs/dotfiles)
+- [Krutonium's configurations](https://github.com/jordanisaacs/dotfiles)
+
 ## TODO
 
 - [X] Overlay for unfree software

@@ -3,8 +3,8 @@
 
 
   inputs = {
-    # nixpkgs.url = "github:NixOS/nixpkgs/";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:NixOS/nixpkgs";
+    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
 
@@ -18,49 +18,40 @@
   outputs = { self, nixpkgs, nixpkgs-unstable, ... }@inputs: 
 
     let 
-      readModules = d: map (x: d + "/${x}") (
-        builtins.attrNames (builtins.readDir d)
-      );
 
-      overlays = {
-        unstable = final: prev: {
-          unstable = import nixpkgs-unstable {
-            system = prev.system;
-            config.allowUnfree = true;
-          };
+      hostsConfigs = (
+        dir: builtins.listToAttrs (
+          map (host: {
+            name = host;
+            value = dir + "/${host}/configuration.nix";
+          }) (builtins.attrNames (builtins.readDir dir)))
+      ) ./hosts;
+
+      nixosModules = (
+        dir: map (mod: dir + "/${mod}")
+          (builtins.attrNames (builtins.readDir dir))
+      ) ./lib/modules;
+
+      overlay = final: prev: {  # TODO: define these on ./lib/overlays
+        unstable = import nixpkgs-unstable {
+          system = prev.system;
+          config.allowUnfree = true;
         };
       };
-    in {
 
-      nixosConfigurations = {
+      overlayModules = [  # I find this ugly... Investigate it
+        ({ ... }: { nixpkgs.overlays = [ overlay ]; })
+      ];
 
-        adam = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+      mkHost = hostConfig:
+        nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";  # how to get from host?
           specialArgs = inputs;
-          modules = [
-	      ( { ... }: { nixpkgs.overlays = [ overlays.unstable ]; } )
-	    ]
-            ++ (readModules ./lib/modules)
-            ++ [ ./configuration.nix ];
+          modules = overlayModules ++ nixosModules ++ [ hostConfig ];
         };
 
-      };
+    in {
+      nixosConfigurations = builtins.mapAttrs
+        (host: config: mkHost config) hostsConfigs;
     };
 }
-
-# TIP on reading multiple files
-#nixosModules = builtins.listToAttrs (
-#map
-#  (x: { name = x; value = import (./modules + "/${x}"); })
-#  (builtins.attrNames (builtins.readDir ./modules)));
-#
-#nixosConfigurations = 
-#builtins.listToAttrs (map (x:
-#  {
-#    name = x;
-#    value = defineFlakeSystem {
-#      imports = [
-#	(import (./hosts + "/${x}/configuration.nix") { inherit self; })
-#      ];
-#    };
-#  }) (builtins.attrNames (builtins.readDir ./hosts)));
