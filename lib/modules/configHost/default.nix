@@ -1,11 +1,24 @@
 { lib, pkgs, config, ... }:
-with lib;                      
-let
-  cfg = config.hostConfig;
+
+with lib;
+let cfg = config.hostConfig;
 in {
 
   options.hostConfig = {
     enable = mkEnableOption "Enable default host configuration";
+
+    host = {
+      name = mkOption {
+        description = "Host name.";
+        type = types.uniq types.str;
+      };
+      zone = mkOption {
+        description = "Host time zone.";
+        type = types.uniq types.str;
+        default = "Brazil/East";
+      };
+    };
+
   };
 
   config = mkIf cfg.enable {
@@ -26,9 +39,8 @@ in {
     };
     boot.tmpOnTmpfs = false;
 
-  
-    networking.hostName = "adam";
-    time.timeZone = "Brazil/East";
+    networking.hostName = cfg.host.name;
+    time.timeZone = cfg.host.zone;
   
     users.users.marcosrdac = {
       isNormalUser = true;
@@ -77,7 +89,6 @@ in {
   
     sound.enable = true;
     hardware.pulseaudio.enable = true;
-    nixpkgs.config.pulseaudio = true;
     services.printing.enable = true;
   
     programs.gnupg.agent = {

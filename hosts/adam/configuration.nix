@@ -7,5 +7,9 @@
 
   hostConfig = {
     enable = true;
+    host = {
+      name = "adam";
+      zone = "Brazil/East";
+    };
   };
 }
