@@ -23,12 +23,49 @@ in {
         example = "TODO";
       };
 
+      locale = mkOption {
+        type = with types; uniq str;
+        description = "Host locale";
+        default = "en_US.UTF-8";
+        example = "TODO";
+      };
+
       stateVersion = mkOption {
         type = with types; uniq str;
         description = "NixOS state version";
         default = "21.05";
         example = "21.11";
       };
+    };
+
+    users = {
+      available = mkOption {
+        type = with types; attrs;
+        description = "Set of users for the machine";
+        default = {
+          "marcosrdac" = {
+            isNormalUser = true;
+            extraGroups = [ "wheel" ];
+          };
+        };
+        example = {
+          "marcos" = {
+            isNormalUser = true;
+            extraGroups = [ "wheel" ];
+          };
+          "family" = {
+            isNormalUser = true;
+          };
+        };
+      };
+
+      defaultUserShell = mkOption {
+        type = with types; package;
+        description = "Default user shell";
+        default = pkgs.zsh;
+        example = pkgs.bash;
+      };
+
     };
 
     boot = {
@@ -62,21 +99,93 @@ in {
         Wether to search for other operational systems for boot menu or not
       '';
       
-      tmpOnTmpfs = mkEnableOption ''
-        Wether to mount /tmp on RAM or not
-      '';
-
+      tmpOnTmpfs = mkOption {
+        description = ''
+          Wether to mount /tmp on RAM or not
+        '';
+        type = with types; bool;
+        default = true;
+        example = false; 
+      };
     };
 
     packages = {
-      useDefault = mkEnableOption ''
-        Wether to use default system packages or not
-      '';
+      useDefault = mkOption {
+        description = ''
+          Wether to use default system packages or not
+        '';
+        type = with types; bool;
+        default = true;
+        example = false;
+      };
+
       extra = mkOption {
         description = "Extra packages";
-        type = with types; listOf package ;
+        type = with types; listOf package;
         default = [ ];
         example = [ inkscape ];
+      };
+    };
+
+    variables = {
+      useDefault = mkOption {
+        description = ''
+          Wether to use default environment variables or not
+        '';
+        type = with types; bool;
+        default = true;
+        example = false;
+      };
+      extra = mkOption {
+        description = "Extra variables";
+        type = with types; attrsOf str;
+        default = { };
+        example = { EDITOR = "nano"; };
+      };
+    };
+
+    devices = {
+      input = {
+        keyboard = {
+          xkbLayout = mkOption {
+            description = "";
+            type = with types; str;
+            default = "us";
+            example = "us";
+          };
+          xkbVariant = mkOption {
+            description = "";
+            type = with types; str;
+            default = "intl";
+            example = "intl";
+          };
+          xkbOptions = mkOption {
+            description = "";
+            type = with types; str;
+            default = "caps:swapescape";
+            example = "";
+          };
+          ttyLayout = mkOption {
+            description = "";
+            type = with types; str;
+            default = "us";
+            example = "us";
+          };
+        };
+      };
+      network = {
+        interfaces = mkOption {
+          description = "Network interfaces";
+          type = with types; listOf str ;
+          default = [ ];
+          example = [ "enp2s0" "wlp3s0" ]; 
+        };
+        useDHCP = mkOption {
+          description = "Wether to use DHCP or not";
+          type = with types; bool;
+          default = true;
+          example = false; 
+        };
       };
     };
 
@@ -119,39 +228,103 @@ in {
     environment.systemPackages = with pkgs; let
       defaultPackages = [
         vim neovim
-  
+
+        git wget 
         busybox  #=: lspci
   
-        firefox qutebrowser
+        qutebrowser firefox
         lf
-        wget
-        git
         pavucontrol
   
         keepassx2
         unstable.spotify
-        gimp
         tdesktop  #=: telegram desktop
+      ];
+      designPackages = [
+        gimp
+        inkscape
       ];
       in 
         (if cfg.packages.useDefault
-        then defaultPackages
-        else [ ]) ++ cfg.packages.extra;
-          
+          then defaultPackages
+          else [ ])
+        ++ designPackages
+        ++ cfg.packages.extra;
   
-    environment.variables = {
-      EDITOR = "vim";
+    environment.variables = let
+      defaultVariables = {
+        EDITOR = "nvim";
+      };
+      in
+        (if cfg.variables.useDefault
+          then defaultVariables
+          else { })
+        // cfg.variables.extra;
+
+    programs.neovim = {
+      enable = true;
+      viAlias = true;
+      vimAlias = true;
     };
-  
-    networking.interfaces = {
-      enp2s0.useDHCP = false;
-      wlp3s0.useDHCP = false;
-    };
-  
+
     i18n.defaultLocale = "en_US.UTF-8";
-    console = {
-      font = "Lat2-Terminus16";
-      keyMap = "us";
+
+
+    console.font = "Lat2-Terminus16";
+
+    fonts = {
+      fontDir.enable = true;
+      fonts = with pkgs; [
+        spleen
+        #noto-fonts
+        #noto-fonts-cjk
+        #noto-fonts-emoji
+        #liberation_ttf
+        #fira-code
+        #fira-code-symbols
+        #mplus-outline-fonts
+        #dina-font
+        #proggyfonts
+        #source-sans-pro
+        #source-serif-pro
+        #noto-fonts-emoji
+        #corefonts
+        #recursive
+      ];
+
+      fontconfig = {
+        defaultFonts = {
+          serif = [ "Recursive Sans Casual Static Medium" ];
+          sansSerif = [ "Recursive Sans Linear Static Medium" ];
+          monospace = [ "Recursive Mono Linear Static" ];
+          emoji = [ "Noto Color Emoji" ];
+        };
+
+        localConf = ''
+          <?xml version="1.0"?>
+          <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+          <fontconfig>
+            <alias binding="weak">
+              <family>monospace</family>
+              <prefer>
+                <family>emoji</family>
+              </prefer>
+            </alias>
+            <alias binding="weak">
+              <family>sans-serif</family>
+              <prefer>
+                <family>emoji</family>
+              </prefer>
+            </alias>
+            <alias binding="weak">
+              <family>serif</family>
+              <prefer>
+                <family>emoji</family>
+              </prefer>
+            </alias>
+          </fontconfig>
+        '';
+      };
     };
   
     services.xserver.enable = true;
@@ -160,9 +333,11 @@ in {
   
     services.xserver.libinput.enable = true;
   
-    services.xserver.layout = "us";
-    services.xserver.xkbVariant = "intl";
-    services.xserver.xkbOptions = "caps:swapescape";
+    services.xserver.layout = cfg.devices.input.keyboard.xkbLayout;
+    services.xserver.xkbVariant = cfg.devices.input.keyboard.xkbVariant;
+    services.xserver.xkbOptions = cfg.devices.input.keyboard.xkbOptions;
+
+    console.keyMap = cfg.devices.input.keyboard.ttyLayout;
   
     sound.enable = true;
     hardware.pulseaudio.enable = true;
@@ -173,13 +348,43 @@ in {
       enableSSHSupport = true;
     };
   
-    networking.firewall.enable = false;
     services.openssh.enable = true;
 
-    users.users.marcosrdac = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" ];
+    users.users = cfg.users.available;
+    users.defaultUserShell = cfg.users.defaultUserShell;
+
+    nix.allowedUsers = builtins.attrNames cfg.users.available;  # all of them
+    
+    #users.extraGroups = {
+    #   vboxusers.members = [ "marcosrdac" ];
+    #};
+
+    networking = {
+      networkmanager.enable = true;
+
+      interfaces = listToAttrs ( map (
+        n: { name = "${n}"; value = { useDHCP = cfg.devices.network.useDHCP; }; }
+      ) cfg.devices.network.interfaces);
+
+      proxy = {
+        #default = "http://user:password@proxy:port/";
+        #noProxy = "127.0.0.1,localhost,internal.domain";
+      };
+
+      firewall = {
+        enable = false;
+        #allowedTCPPorts = [ ... ];
+        #allowedUDPPorts = [ ... ];
+      };
+
+      extraHosts = ''
+        # Public
+        #IP.ADDR hostname
+
+        # VPN protected services
+        #IP.ADDR hostname
+      '';
     };
-  
+
   };
 }

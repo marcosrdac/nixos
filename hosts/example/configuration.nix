@@ -31,7 +31,7 @@
         efiSysMountPoint = "/efi";
       };
       useOSProber = false;
-      tmpOnTmpfs = true;
+      tmpOnTmpfs = false;
     };
     
     packages = {
