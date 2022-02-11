@@ -24,6 +24,12 @@
       };
     };
 
+    devices = {
+      network = {
+        interfaces = [ "enp2s0" "wlp3s0" ];
+      };
+    };
+
     boot = {
       loader.portable = {
         enable = true;
@@ -32,26 +38,6 @@
       };
       useOSProber = false;
       tmpOnTmpfs = true;
-    };
-    
-    packages = {
-      useDefault = true;
-      extra = with pkgs; [ ];
-    };
-
-    devices = {
-      input = {
-        keyboard = {
-          ttyLayout = "us";
-          xkbLayout = "us";
-          xkbVariant = "intl";
-          xkbOptions = "caps:swapescape";
-        };
-      };
-
-      network = {
-        interfaces = [ "enp2s0" "wlp3s0" ];
-      };
     };
 
   };
