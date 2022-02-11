@@ -55,11 +55,9 @@ nixos-rebuild switch
 ## TODO
 
 - [X] Overlay for unfree software
-- [ ] Make system configuration default as a module
-- [ ] Create users on flake.nix without home-manager
-- [ ] Create users on flake.nix with home-manager (if advantages are seen)
-- [ ] Create module to create users (configUsers)
-- [ ] Use configUsers module to create users listed for the host
+- [X] Make system configuration default as a module
+- [X] Use configUsers module to create users listed for the host
+- [ ] Create usual GPT boot config in module
 
 ## My personal desires
 - [ ] Default python env should be easily accessable for data analysis stuff
