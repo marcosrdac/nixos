@@ -3,8 +3,8 @@
 with lib;
 let
   cfg = config.hostConfig;
-in {
-
+in
+{
   options.hostConfig = {
     enable = mkEnableOption "Enable default host configuration";
 
@@ -227,7 +227,24 @@ in {
  
     environment.systemPackages = with pkgs; let
       defaultPackages = [
+        home-manager
         vim neovim
+	tmux
+	alacritty
+
+        xorg.xinit
+        xorg.xorgserver
+        xorg.xf86inputevdev
+        xorg.xf86inputsynaptics
+        xorg.xf86inputlibinput
+        xorg.xf86videointel
+        xorg.xf86videoati
+        xorg.xf86videonouveau
+
+	#xfce
+	
+        bspwm sxhkd
+	river
 
         git wget 
         busybox  #=: lspci
@@ -250,6 +267,26 @@ in {
           else [ ])
         ++ designPackages
         ++ cfg.packages.extra;
+
+
+    services.xserver = {
+      enable = true;
+      autorun = true;
+      exportConfiguration = true;
+
+      displayManager.lightdm.enable = true;
+      #displayManager.startx.enable = true;
+      #desktopManager.gnome.enable = true;
+      desktopManager.xfce.enable = true;
+      windowManager.bspwm.enable = true;
+  
+      libinput.enable = true;
+  
+      layout = cfg.devices.input.keyboard.xkbLayout;
+      xkbVariant = cfg.devices.input.keyboard.xkbVariant;
+      xkbOptions = cfg.devices.input.keyboard.xkbOptions;
+    };
+
   
     environment.variables = let
       defaultVariables = {
@@ -327,16 +364,6 @@ in {
       };
     };
   
-    services.xserver.enable = true;
-    services.xserver.displayManager.gdm.enable = true;
-    services.xserver.desktopManager.gnome.enable = true;
-  
-    services.xserver.libinput.enable = true;
-  
-    services.xserver.layout = cfg.devices.input.keyboard.xkbLayout;
-    services.xserver.xkbVariant = cfg.devices.input.keyboard.xkbVariant;
-    services.xserver.xkbOptions = cfg.devices.input.keyboard.xkbOptions;
-
     console.keyMap = cfg.devices.input.keyboard.ttyLayout;
   
     sound.enable = true;

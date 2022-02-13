@@ -7,15 +7,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR";
-
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, ... }@inputs: 
+  outputs = { self, nixpkgs, nixpkgs-unstable, nur, ... }@inputs: 
 
     let 
 
@@ -32,15 +27,16 @@
           (builtins.attrNames (builtins.readDir dir))
       ) ./lib/modules;
 
-      overlay = final: prev: {  # TODO: define these on ./lib/overlays
-        unstable = import nixpkgs-unstable {
+      unstable-overlay = final: prev: {  # TODO: define these on ./lib/overlays
+        unstable = import inputs.nixpkgs-unstable {
           system = prev.system;
           config.allowUnfree = true;
         };
       };
+      nur-overlay = nur.overlay;
 
       overlayModules = [  # I find this ugly... Investigate it
-        ({ ... }: { nixpkgs.overlays = [ overlay ]; })
+        ({ ... }: { nixpkgs.overlays = [ unstable-overlay nur-overlay ]; })
       ];
 
       mkHost = hostConfig:

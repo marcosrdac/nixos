@@ -30,6 +30,10 @@
       };
     };
 
+    packages = with pkgs; {
+      extra = [ xorg.xinit ];
+    };
+
     boot = {
       loader.portable = {
         enable = true;
