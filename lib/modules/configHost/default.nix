@@ -127,7 +127,7 @@ in
       };
     };
 
-    variables = {
+    variables = {  # TODO: add extra variables by host as // overlay
       useDefault = mkOption {
         description = ''
           Wether to use default environment variables or not
@@ -227,7 +227,8 @@ in
  
     environment.systemPackages = with pkgs; let
       defaultPackages = [
-        home-manager
+        unstable.home-manager
+        #home-manager # error: file 'home-manager/home-manager/home-manager.nix' was not found in the Nix search path (add it using $NIX_PATH or -I)
         vim neovim
 	tmux
 	alacritty
@@ -243,7 +244,8 @@ in
 
 	#xfce
 	
-        bspwm sxhkd
+        #bspwm
+	sxhkd
 	river
 
         git wget 
@@ -279,6 +281,16 @@ in
       #desktopManager.gnome.enable = true;
       desktopManager.xfce.enable = true;
       windowManager.bspwm.enable = true;
+      
+      desktopManager.session = [
+        {
+          name = "home-manager";
+          start = ''
+            ${pkgs.runtimeShell} $HOME/.xsession-hm &
+            waitPID=$!
+          '';
+        }
+      ];
   
       libinput.enable = true;
   

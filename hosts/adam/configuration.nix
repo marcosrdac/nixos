@@ -21,6 +21,10 @@
           isNormalUser = true;
           extraGroups = [ "wheel" "vboxusers" ];
         };
+        test = {
+          isNormalUser = true;
+          extraGroups = [ "wheel" "vboxusers" ];
+        };
       };
     };
 
