@@ -96,12 +96,12 @@ in
       };
 
       useOSProber = mkEnableOption ''
-        Wether to search for other operational systems for boot menu or not
+        Whether to search for other operational systems for boot menu or not
       '';
       
       tmpOnTmpfs = mkOption {
         description = ''
-          Wether to mount /tmp on RAM or not
+          Whether to mount /tmp on RAM or not
         '';
         type = with types; bool;
         default = true;
@@ -112,7 +112,7 @@ in
     packages = {
       useDefault = mkOption {
         description = ''
-          Wether to use default system packages or not
+          Whether to use default system packages or not
         '';
         type = with types; bool;
         default = true;
@@ -130,7 +130,7 @@ in
     variables = {  # TODO: add extra variables by host as // overlay
       useDefault = mkOption {
         description = ''
-          Wether to use default environment variables or not
+          Whether to use default environment variables or not
         '';
         type = with types; bool;
         default = true;
@@ -181,7 +181,7 @@ in
           example = [ "enp2s0" "wlp3s0" ]; 
         };
         useDHCP = mkOption {
-          description = "Wether to use DHCP or not";
+          description = "Whether to use DHCP or not";
           type = with types; bool;
           default = true;
           example = false; 
@@ -229,35 +229,18 @@ in
       defaultPackages = [
         unstable.home-manager
         #home-manager # error: file 'home-manager/home-manager/home-manager.nix' was not found in the Nix search path (add it using $NIX_PATH or -I)
+
+        lf
         vim neovim
 	tmux
 	alacritty
 
-        xorg.xinit
-        xorg.xorgserver
-        xorg.xf86inputevdev
-        xorg.xf86inputsynaptics
-        xorg.xf86inputlibinput
-        xorg.xf86videointel
-        xorg.xf86videoati
-        xorg.xf86videonouveau
-
-	#xfce
-	
-        #bspwm
-	sxhkd
-	river
-
-        git wget 
+        git wget
         busybox  #=: lspci
   
-        qutebrowser firefox
-        lf
-        pavucontrol
+        firefox
   
         keepassx2
-        unstable.spotify
-        tdesktop  #=: telegram desktop
       ];
       designPackages = [
         gimp
@@ -276,17 +259,19 @@ in
       autorun = true;
       exportConfiguration = true;
 
-      displayManager.lightdm.enable = true;
-      #displayManager.startx.enable = true;
-      #desktopManager.gnome.enable = true;
+      displayManager.lightdm = {
+        enable = true;
+	#background = "";
+        #extraSeatDefaults = "";
+      };
+
       desktopManager.xfce.enable = true;
-      windowManager.bspwm.enable = true;
       
       desktopManager.session = [
         {
           name = "home-manager";
           start = ''
-            ${pkgs.runtimeShell} $HOME/.xsession-hm &
+            ${pkgs.runtimeShell} $HOME/.hm-xsession &
             waitPID=$!
           '';
         }

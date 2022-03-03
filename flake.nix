@@ -35,7 +35,7 @@
       };
       nur-overlay = nur.overlay;
 
-      overlayModules = [  # I find this ugly... Investigate it
+      overlayModules = [  # I find this ugly... Investigation needed
         ({ ... }: { nixpkgs.overlays = [ unstable-overlay nur-overlay ]; })
       ];
 

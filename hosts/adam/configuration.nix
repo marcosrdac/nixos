@@ -15,29 +15,6 @@
       stateVersion = "21.05";
     };
 
-    users = {
-      available = {
-        marcosrdac = {
-          isNormalUser = true;
-          extraGroups = [ "wheel" "vboxusers" ];
-        };
-        test = {
-          isNormalUser = true;
-          extraGroups = [ "wheel" "vboxusers" ];
-        };
-      };
-    };
-
-    devices = {
-      network = {
-        interfaces = [ "enp2s0" "wlp3s0" ];
-      };
-    };
-
-    packages = with pkgs; {
-      extra = [ xorg.xinit ];
-    };
-
     boot = {
       loader.portable = {
         enable = true;
@@ -47,6 +24,26 @@
       useOSProber = false;
       tmpOnTmpfs = true;
     };
+
+    devices = {
+      network = {
+        interfaces = [ "enp2s0" "wlp3s0" ];
+      };
+    };
+
+    packages = with pkgs; {
+      extra = [ ];
+    };
+
+    users = {
+      available = {
+        marcosrdac = {
+          isNormalUser = true;
+          extraGroups = [ "wheel" "vboxusers" ];
+        };
+      };
+    };
+
 
   };
 
