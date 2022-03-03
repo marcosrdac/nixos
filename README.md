@@ -35,7 +35,7 @@ nixos-rebuild switch
 
 ## Principles
 
-- NixOS should be easy to reinstall and be ready to use --- so that I no longer feel attachment for my machines
+- NixOS should be easy to reinstall and be ready to use --- so that I no longer feel attached to my machines
 - Each host should have its own configuration file inside ./hosts
 - Almost every config should be modularized in ./lib/modules so that a computer configuration is always clear
 - Personal stuff should not be in this repository
@@ -46,7 +46,7 @@ nixos-rebuild switch
 
 ## Inspiration
 
-- [Pinpox's configurations](https://github.com/pinpox/nixos)
+- [Pinpox' configurations](https://github.com/pinpox/nixos)
 - [Jordan Isaacs' configurations](https://github.com/jordanisaacs/dotfiles)
 - [Krutonium's configurations](https://github.com/Krutonium/My_Unified_NixOS_Config)
 
