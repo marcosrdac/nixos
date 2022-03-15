@@ -224,11 +224,16 @@ in
       );
     boot.tmpOnTmpfs = cfg.boot.tmpOnTmpfs;
  
+    # enable system programs completion for users
+    environment.pathToLink = [ "/share/zsh" ];
  
     environment.systemPackages = with pkgs; let
       defaultPackages = [
+	# error: file 'home-manager/home-manager/home-manager.nix' was not found in the Nix search path (add it using $NIX_PATH or -I)
+        #home-manager
         unstable.home-manager
-        #home-manager # error: file 'home-manager/home-manager/home-manager.nix' was not found in the Nix search path (add it using $NIX_PATH or -I)
+        busybox  #=: lspci
+	acpi
 
         lf
         vim neovim
@@ -236,7 +241,6 @@ in
 	alacritty
 
         git wget
-        busybox  #=: lspci
   
         firefox
   
@@ -252,7 +256,6 @@ in
           else [ ])
         ++ designPackages
         ++ cfg.packages.extra;
-
 
     services.xserver = {
       enable = true;
