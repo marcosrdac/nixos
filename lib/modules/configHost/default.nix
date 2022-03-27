@@ -225,7 +225,7 @@ in
     boot.tmpOnTmpfs = cfg.boot.tmpOnTmpfs;
  
     # enable system programs completion for users
-    environment.pathToLink = [ "/share/zsh" ];
+    #environment.pathToLink = [ "/share/zsh" ];
  
     environment.systemPackages = with pkgs; let
       defaultPackages = [
@@ -256,6 +256,8 @@ in
           else [ ])
         ++ designPackages
         ++ cfg.packages.extra;
+
+    programs.udevil.enable = true;
 
     services.xserver = {
       enable = true;
@@ -310,6 +312,7 @@ in
     console.font = "Lat2-Terminus16";
 
     fonts = {
+      enableDefaultFonts = true;
       fontDir.enable = true;
       fonts = with pkgs; [
         spleen
@@ -360,9 +363,11 @@ in
               </prefer>
             </alias>
           </fontconfig>
-        '';
+        '';  # ???
       };
     };
+  
+    hardware.opengl.setLdLibraryPath = true;
   
     console.keyMap = cfg.devices.input.keyboard.ttyLayout;
   
@@ -386,6 +391,7 @@ in
     #   vboxusers.members = [ "marcosrdac" ];
     #};
 
+
     networking = {
       networkmanager.enable = true;
 
@@ -399,6 +405,7 @@ in
       };
 
       firewall = {
+        connectionTrackingModules = [ "pptp" ];
         enable = false;
         #allowedTCPPorts = [ ... ];
         #allowedUDPPorts = [ ... ];

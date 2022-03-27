@@ -12,7 +12,7 @@
       hostName = "adam";
       timeZone = "Brazil/East";
       locale = "en_US.UTF-8";
-      stateVersion = "21.05";
+      stateVersion = "21.11";
     };
 
     boot = {
@@ -38,8 +38,14 @@
     users = {
       available = {
         marcosrdac = {
+	  description = "Marcos Conceição";
           isNormalUser = true;
-          extraGroups = [ "wheel" "vboxusers" ];
+          extraGroups = [ "wheel" "networkmanager" "vboxusers" ];
+        };
+        guest = {
+	  description = "Guest";
+          isNormalUser = true;
+          extraGroups = [ "networkmanager" ];
         };
       };
     };
